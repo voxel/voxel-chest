@@ -1,0 +1,6 @@
+# voxel-chest
+
+## License
+
+MIT
+
