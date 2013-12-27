@@ -7,6 +7,12 @@
         "url": "git@github.com:deathcap/voxel-chest.git"
     },
     "dependencies": {
+        "voxel-modal": "git://github.com/deathcap/voxel-modal.git",
+        "inventory": "git://github.com/deathcap/inventory.git",
+        "itempile": "git://github.com/deathcap/itempile.git",
+        "inventory-window": "git://github.com/deathcap/inventory-window.git",
+        "craftingrecipes": "git://github.com/deathcap/craftingrecipes.git",
+        "ever": "0.0.3"
     },
     "devDependencies": {
         "coffee-script": "1.6.3"
