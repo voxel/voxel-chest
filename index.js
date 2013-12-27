@@ -52,8 +52,8 @@
       if (this.opts.registerBlock) {
         this.registry.registerBlock('chest', {
           texture: ['door_wood_lower', 'piston_top_normal', 'bookshelf'],
-          onInteract: function() {
-            _this.chestDialog.open();
+          onInteract: function(target) {
+            _this.chestDialog.open(target);
             return true;
           }
         });
@@ -73,7 +73,8 @@
     __extends(ChestDialog, _super);
 
     function ChestDialog(game, playerInventory, registry, blockdata) {
-      var chestCont;
+      var chestCont,
+        _this = this;
       this.game = game;
       this.playerInventory = playerInventory;
       this.registry = registry;
@@ -83,6 +84,9 @@
         inventory: this.playerInventory
       });
       this.chestInventory = new Inventory(10, 3);
+      this.chestInventory.on('changed', function() {
+        return _this.updateBlockdata();
+      });
       this.chestIW = new InventoryWindow({
         inventory: this.chestInventory
       });
@@ -103,6 +107,49 @@
         element: this.dialog
       });
     }
+
+    ChestDialog.prototype.open = function(target) {
+      var bd, i, itemPile, newInventory, x, y, z, _i, _len, _ref1, _ref2;
+      _ref1 = target.voxel, x = _ref1[0], y = _ref1[1], z = _ref1[2];
+      bd = this.blockdata.get(x, y, z);
+      console.log('activeBlockdata=', JSON.stringify(bd));
+      if (bd != null) {
+        console.log('load existing at ', target.voxel);
+        newInventory = Inventory.fromString(bd.inventory);
+        console.log('newInventory=' + JSON.stringify(newInventory));
+        _ref2 = newInventory.array;
+        for (i = _i = 0, _len = _ref2.length; _i < _len; i = ++_i) {
+          itemPile = _ref2[i];
+          console.log('load chest', i, itemPile);
+          this.chestInventory.set(i, itemPile);
+        }
+      } else {
+        console.log('new empty inventory at ', target.voxel);
+        this.chestInventory.clear();
+        bd = {
+          inventory: this.chestInventory.toString()
+        };
+        this.blockdata.set(x, y, z, bd);
+      }
+      this.activeBlockdata = bd;
+      console.log('activeBlockdata 2=', JSON.stringify(this.activeBlockdata));
+      console.log(target.voxel);
+      return ChestDialog.__super__.open.call(this);
+    };
+
+    ChestDialog.prototype.updateBlockdata = function() {
+      console.log('update with activeBlockdata=', JSON.stringify(this.activeBlockdata));
+      if (this.activeBlockdata == null) {
+        return;
+      }
+      console.log('chestInventory=', this.chestInventory.toString());
+      return this.activeBlockdata.inventory = this.chestInventory.toString();
+    };
+
+    ChestDialog.prototype.close = function() {
+      delete this.activeBlockdata;
+      return ChestDialog.__super__.close.call(this);
+    };
 
     return ChestDialog;
 

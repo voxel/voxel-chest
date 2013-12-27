@@ -1,3 +1,4 @@
+# vim: set shiftwidth=2 tabstop=2 softtabstop=2 expandtab:
 
 Modal = require 'voxel-modal'
 Inventory = require 'inventory'
@@ -30,8 +31,8 @@ class Chest
   enable: () ->
     if @opts.registerBlock
       # TODO: chest textures? not in current tp..
-      @registry.registerBlock 'chest', {texture: ['door_wood_lower', 'piston_top_normal', 'bookshelf'], onInteract: () =>  
-         @chestDialog.open()
+      @registry.registerBlock 'chest', {texture: ['door_wood_lower', 'piston_top_normal', 'bookshelf'], onInteract: (target) =>  
+         @chestDialog.open(target)
          true
        }
 
@@ -56,6 +57,7 @@ class ChestDialog extends Modal
 
     # TODO: persist on close, restore on open (voxel-blockdata)
     @chestInventory = new Inventory(10, 3)  # TODO: bigger varieties
+    @chestInventory.on 'changed', () => @updateBlockdata()
     @chestIW = new InventoryWindow {inventory:@chestInventory}
 
     # the overall dialog
@@ -78,3 +80,37 @@ class ChestDialog extends Modal
 
     super game, {element: @dialog}
 
+  open: (target) ->
+    [x, y, z] = target.voxel
+    bd = @blockdata.get x, y, z
+    console.log 'activeBlockdata=',JSON.stringify(bd)
+    if bd?
+      console.log 'load existing at ',target.voxel
+      # TODO: better way to 'load' into an inventory than setting all slots?
+      newInventory = Inventory.fromString(bd.inventory)
+      console.log 'newInventory='+JSON.stringify(newInventory)
+      for itemPile, i in newInventory.array  # TODO: if smaller than current?
+        console.log 'load chest',i,itemPile
+        @chestInventory.set i, itemPile
+    else
+      console.log 'new empty inventory at ',target.voxel
+      @chestInventory.clear()
+      bd = {inventory: @chestInventory.toString()}
+      @blockdata.set x, y, z, bd
+
+    @activeBlockdata = bd
+    console.log 'activeBlockdata 2=',JSON.stringify(@activeBlockdata)
+    console.log target.voxel
+
+    super()
+
+  updateBlockdata: () ->
+    console.log 'update with activeBlockdata=',JSON.stringify(@activeBlockdata)
+    return if not @activeBlockdata?
+
+    console.log 'chestInventory=',@chestInventory.toString()
+    @activeBlockdata.inventory = @chestInventory.toString()
+
+  close: () ->
+    delete @activeBlockdata
+    super()
