@@ -80,12 +80,15 @@ class ChestDialog extends Modal
 
     super game, {element: @dialog}
 
-  open: (target) ->
-    [x, y, z] = target.voxel
+  loadBlockdata: (x, y, z) ->
+    if not @blockdata?
+      console.log 'voxel-blockdata not loaded, voxel-chest persistence disabled'
+      return
+
     bd = @blockdata.get x, y, z
     console.log 'activeBlockdata=',JSON.stringify(bd)
     if bd?
-      console.log 'load existing at ',target.voxel
+      console.log 'load existing at ',x,y,z
       # TODO: better way to 'load' into an inventory than setting all slots?
       newInventory = Inventory.fromString(bd.inventory)
       console.log 'newInventory='+JSON.stringify(newInventory)
@@ -93,14 +96,18 @@ class ChestDialog extends Modal
         console.log 'load chest',i,itemPile
         @chestInventory.set i, itemPile
     else
-      console.log 'new empty inventory at ',target.voxel
-      @chestInventory.clear()
+      console.log 'new empty inventory at ',x,y,z
       bd = {inventory: @chestInventory.toString()}
       @blockdata.set x, y, z, bd
 
     @activeBlockdata = bd
     console.log 'activeBlockdata 2=',JSON.stringify(@activeBlockdata)
-    console.log target.voxel
+
+  open: (target) ->
+    @chestInventory.clear()
+
+    [x, y, z] = target.voxel
+    @loadBlockdata(x, y, z)
 
     super()
 

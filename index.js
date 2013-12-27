@@ -108,32 +108,40 @@
       });
     }
 
-    ChestDialog.prototype.open = function(target) {
-      var bd, i, itemPile, newInventory, x, y, z, _i, _len, _ref1, _ref2;
-      _ref1 = target.voxel, x = _ref1[0], y = _ref1[1], z = _ref1[2];
+    ChestDialog.prototype.loadBlockdata = function(x, y, z) {
+      var bd, i, itemPile, newInventory, _i, _len, _ref1;
+      if (this.blockdata == null) {
+        console.log('voxel-blockdata not loaded, voxel-chest persistence disabled');
+        return;
+      }
       bd = this.blockdata.get(x, y, z);
       console.log('activeBlockdata=', JSON.stringify(bd));
       if (bd != null) {
-        console.log('load existing at ', target.voxel);
+        console.log('load existing at ', x, y, z);
         newInventory = Inventory.fromString(bd.inventory);
         console.log('newInventory=' + JSON.stringify(newInventory));
-        _ref2 = newInventory.array;
-        for (i = _i = 0, _len = _ref2.length; _i < _len; i = ++_i) {
-          itemPile = _ref2[i];
+        _ref1 = newInventory.array;
+        for (i = _i = 0, _len = _ref1.length; _i < _len; i = ++_i) {
+          itemPile = _ref1[i];
           console.log('load chest', i, itemPile);
           this.chestInventory.set(i, itemPile);
         }
       } else {
-        console.log('new empty inventory at ', target.voxel);
-        this.chestInventory.clear();
+        console.log('new empty inventory at ', x, y, z);
         bd = {
           inventory: this.chestInventory.toString()
         };
         this.blockdata.set(x, y, z, bd);
       }
       this.activeBlockdata = bd;
-      console.log('activeBlockdata 2=', JSON.stringify(this.activeBlockdata));
-      console.log(target.voxel);
+      return console.log('activeBlockdata 2=', JSON.stringify(this.activeBlockdata));
+    };
+
+    ChestDialog.prototype.open = function(target) {
+      var x, y, z, _ref1;
+      this.chestInventory.clear();
+      _ref1 = target.voxel, x = _ref1[0], y = _ref1[1], z = _ref1[2];
+      this.loadBlockdata(x, y, z);
       return ChestDialog.__super__.open.call(this);
     };
 
