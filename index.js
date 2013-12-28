@@ -90,6 +90,8 @@
       this.chestIW = new InventoryWindow({
         inventory: this.chestInventory
       });
+      this.chestIW.linkedInventory = this.playerInventory;
+      this.playerIW.linkedInventory = this.chestInventory;
       chestCont = this.chestIW.createContainer();
       contents = [];
       contents.push(chestCont);

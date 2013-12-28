@@ -55,10 +55,13 @@ class ChestDialog extends ModalDialog
       inventory: @playerInventory
       }
 
-    # TODO: persist on close, restore on open (voxel-blockdata)
-    @chestInventory = new Inventory(10, 3)  # TODO: bigger varieties
+    @chestInventory = new Inventory(10, 3)
     @chestInventory.on 'changed', () => @updateBlockdata()
     @chestIW = new InventoryWindow {inventory:@chestInventory}
+
+    # allow shift-click to transfer items between these two inventories
+    @chestIW.linkedInventory = @playerInventory
+    @playerIW.linkedInventory = @chestInventory
 
     chestCont = @chestIW.createContainer()
 
