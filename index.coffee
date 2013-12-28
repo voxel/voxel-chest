@@ -10,12 +10,11 @@ module.exports = (game, opts) ->
   return new Chest(game, opts)
 
 module.exports.pluginInfo =
-  loadAfter: ['voxel-blockdata', 'voxel-registry', 'craftingrecipes']
+  loadAfter: ['voxel-blockdata', 'voxel-registry', 'craftingrecipes', 'voxel-carry']
 
 class Chest
   constructor: (@game, opts) ->
-    # TODO: really ought to refactor this with voxel-chest and voxel-inventory-dialog! seriously
-    @playerInventory = opts.playerInventory ? throw 'voxel-chest requires "playerInventory" set to inventory instance'
+    @playerInventory = game.plugins?.get('voxel-carry')?.inventory ? opts.playerInventory ? throw 'voxel-chest requires "voxel-carry" plugin or "playerInventory" set to inventory instance'
     @registry = game.plugins?.get('voxel-registry')
     @recipes = game.plugins?.get('craftingrecipes')
     @blockdata = game.plugins?.get('voxel-blockdata')
