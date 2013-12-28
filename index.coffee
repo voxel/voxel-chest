@@ -1,6 +1,6 @@
 # vim: set shiftwidth=2 tabstop=2 softtabstop=2 expandtab:
 
-Modal = require 'voxel-modal'
+ModalDialog = require 'voxel-modal-dialog'
 Inventory = require 'inventory'
 InventoryWindow = require 'inventory-window'
 ItemPile = require 'itempile'
@@ -47,7 +47,7 @@ class Chest
     # TODO
 
 
-class ChestDialog extends Modal
+class ChestDialog extends ModalDialog
   constructor: (@game, @playerInventory, @registry, @blockdata) ->
     # TODO: refactor with voxel-inventory-dialog
     @playerIW = new InventoryWindow {
@@ -60,25 +60,16 @@ class ChestDialog extends Modal
     @chestInventory.on 'changed', () => @updateBlockdata()
     @chestIW = new InventoryWindow {inventory:@chestInventory}
 
-    # the overall dialog
-    @dialog = document.createElement('div')
-    @dialog.style.border = '6px outset gray'
-    @dialog.style.visibility = 'hidden'
-    @dialog.style.position = 'absolute'
-    @dialog.style.top = '20%'
-    @dialog.style.left = '30%'
-    @dialog.style.zIndex = 1
-    @dialog.style.backgroundImage = 'linear-gradient(rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.5) 100%)'
-    document.body.appendChild(@dialog)
-
     chestCont = @chestIW.createContainer()
 
-    @dialog.appendChild(chestCont)
-    @dialog.appendChild(document.createElement('br')) # TODO: better positioning
+    contents = []
+    contents.push chestCont
+    contents.push document.createElement('br') # TODO: better positioning
     # player inventory at bottom
-    @dialog.appendChild(@playerIW.createContainer())
+    contents.push @playerIW.createContainer()
 
-    super game, {element: @dialog}
+    console.log 'ChestDialog, super=',super
+    super game, {contents: contents}
 
   loadBlockdata: (x, y, z) ->
     if not @blockdata?
