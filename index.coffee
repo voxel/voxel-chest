@@ -49,14 +49,11 @@ class Chest
 class ChestDialog extends ModalDialog
   constructor: (@game, @playerInventory, @registry, @blockdata) ->
     # TODO: refactor with voxel-inventory-dialog
-    @playerIW = new InventoryWindow {
-      width: 10
-      inventory: @playerInventory
-      }
+    @playerIW = new InventoryWindow {width:10, registry:@registry, inventory: @playerInventory}
 
     @chestInventory = new Inventory(10, 3)
     @chestInventory.on 'changed', () => @updateBlockdata()
-    @chestIW = new InventoryWindow {inventory:@chestInventory}
+    @chestIW = new InventoryWindow {inventory:@chestInventory, registry:@registry}
 
     # allow shift-click to transfer items between these two inventories
     @chestIW.linkedInventory = @playerInventory

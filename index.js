@@ -82,6 +82,7 @@
       this.blockdata = blockdata;
       this.playerIW = new InventoryWindow({
         width: 10,
+        registry: this.registry,
         inventory: this.playerInventory
       });
       this.chestInventory = new Inventory(10, 3);
@@ -89,7 +90,8 @@
         return _this.updateBlockdata();
       });
       this.chestIW = new InventoryWindow({
-        inventory: this.chestInventory
+        inventory: this.chestInventory,
+        registry: this.registry
       });
       this.chestIW.linkedInventory = this.playerInventory;
       this.playerIW.linkedInventory = this.chestInventory;
