@@ -1,5 +1,3 @@
-# vim: set shiftwidth=2 tabstop=2 softtabstop=2 expandtab:
-
 ModalDialog = require 'voxel-modal-dialog'
 Inventory = require 'inventory'
 InventoryWindow = require 'inventory-window'
