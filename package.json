@@ -12,6 +12,7 @@
     "storage"
   ],
   "dependencies": {
+    "craftingrecipes": "~0.1.0",
     "voxel-modal-dialog": "~0.1.0",
     "inventory": "~0.1.0",
     "itempile": "~0.1.1",
@@ -25,8 +26,7 @@
     "voxel-plugins": ">=0.1.0",
     "voxel-carry": ">=0.1.0",
     "voxel-registry": ">=0.1.0",
-    "voxel-blockdata": ">=0.1.0",
-    "craftingrecipes": ">=0.1.0"
+    "voxel-blockdata": ">=0.1.0"
   },
   "license": "MIT"
 }
