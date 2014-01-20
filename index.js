@@ -95,12 +95,13 @@
       });
       this.chestIW.linkedInventory = this.playerInventory;
       this.playerIW.linkedInventory = this.chestInventory;
-      chestCont = this.chestIW.createContainer();
-      contents = [];
-      contents.push(chestCont);
-      contents.push(document.createElement('br'));
-      contents.push(this.playerIW.createContainer());
-      console.log('ChestDialog, super=', ChestDialog.__super__.constructor.apply(this, arguments));
+      if (typeof document !== "undefined" && document !== null) {
+        chestCont = this.chestIW.createContainer();
+        contents = [];
+        contents.push(chestCont);
+        contents.push(document.createElement('br'));
+        contents.push(this.playerIW.createContainer());
+      }
       ChestDialog.__super__.constructor.call(this, game, {
         contents: contents
       });

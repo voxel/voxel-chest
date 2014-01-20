@@ -57,15 +57,15 @@ class ChestDialog extends ModalDialog
     @chestIW.linkedInventory = @playerInventory
     @playerIW.linkedInventory = @chestInventory
 
-    chestCont = @chestIW.createContainer()
+    if document?
+      chestCont = @chestIW.createContainer()
 
-    contents = []
-    contents.push chestCont
-    contents.push document.createElement('br') # TODO: better positioning
-    # player inventory at bottom
-    contents.push @playerIW.createContainer()
+      contents = []
+      contents.push chestCont
+      contents.push document.createElement('br') # TODO: better positioning
+      # player inventory at bottom
+      contents.push @playerIW.createContainer()
 
-    console.log 'ChestDialog, super=',super
     super game, {contents: contents}
 
   loadBlockdata: (x, y, z) ->
