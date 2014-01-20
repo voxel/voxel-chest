@@ -19,8 +19,9 @@ class Chest
 
     opts.registerBlock ?= @registry?
     opts.registerRecipe ?= @recipes?
-    
-    @chestDialog = new ChestDialog(game, @playerInventory, @registry, @blockdata)
+   
+    if @game.isClient
+      @chestDialog = new ChestDialog(game, @playerInventory, @registry, @blockdata)
 
     @opts = opts
     @enable()
@@ -28,10 +29,11 @@ class Chest
   enable: () ->
     if @opts.registerBlock
       # TODO: chest textures? not in current tp..
-      @registry.registerBlock 'chest', {texture: ['door_wood_lower', 'piston_top_normal', 'bookshelf'], onInteract: (target) =>  
-         @chestDialog.open(target)
-         true
-       }
+      @registry.registerBlock 'chest', {texture: ['door_wood_lower', 'piston_top_normal', 'bookshelf'], onInteract: (target) =>
+        # TODO: server-side?
+        @chestDialog.open(target)
+        true
+      }
 
     if @opts.registerRecipe
       @recipes.register new PositionalRecipe([

@@ -43,7 +43,9 @@
       if (opts.registerRecipe == null) {
         opts.registerRecipe = this.recipes != null;
       }
-      this.chestDialog = new ChestDialog(game, this.playerInventory, this.registry, this.blockdata);
+      if (this.game.isClient) {
+        this.chestDialog = new ChestDialog(game, this.playerInventory, this.registry, this.blockdata);
+      }
       this.opts = opts;
       this.enable();
     }
