@@ -12,7 +12,6 @@
     "storage"
   ],
   "dependencies": {
-    "craftingrecipes": "~0.1.0",
     "voxel-modal-dialog": "~0.1.0",
     "inventory": "~0.1.0",
     "itempile": "~0.1.1",

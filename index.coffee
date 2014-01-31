@@ -2,19 +2,18 @@ ModalDialog = require 'voxel-modal-dialog'
 Inventory = require 'inventory'
 InventoryWindow = require 'inventory-window'
 ItemPile = require 'itempile'
-{Recipe, AmorphousRecipe, PositionalRecipe, CraftingThesaurus, RecipeList} = require 'craftingrecipes'
 
 module.exports = (game, opts) ->
   return new Chest(game, opts)
 
 module.exports.pluginInfo =
-  loadAfter: ['voxel-blockdata', 'voxel-registry', 'craftingrecipes', 'voxel-carry']
+  loadAfter: ['voxel-blockdata', 'voxel-registry', 'voxel-recipes', 'voxel-carry']
 
 class Chest
   constructor: (@game, opts) ->
     @playerInventory = game.plugins?.get('voxel-carry')?.inventory ? opts.playerInventory ? throw 'voxel-chest requires "voxel-carry" plugin or "playerInventory" set to inventory instance'
     @registry = game.plugins?.get('voxel-registry')
-    @recipes = game.plugins?.get('craftingrecipes')
+    @recipes = game.plugins?.get('voxel-recipes')
     @blockdata = game.plugins?.get('voxel-blockdata')
 
     opts.registerBlock ?= @registry?
@@ -36,9 +35,9 @@ class Chest
       }
 
     if @opts.registerRecipe
-      @recipes.register new PositionalRecipe([
-        ['wood.plank', 'wood.plank', 'wood.plank'], 
-        ['wood.plank', undefined, 'wood.plank'], 
+      @recipes.registerPositional([
+        ['wood.plank', 'wood.plank', 'wood.plank'],
+        ['wood.plank', undefined, 'wood.plank'],
         ['wood.plank', 'wood.plank', 'wood.plank']],
         new ItemPile('chest', 1))
 
