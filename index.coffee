@@ -11,7 +11,7 @@ module.exports.pluginInfo =
 
 class Chest
   constructor: (@game, opts) ->
-    @playerInventory = game.plugins?.get('voxel-carry')?.inventory ? opts.playerInventory ? throw 'voxel-chest requires "voxel-carry" plugin or "playerInventory" set to inventory instance'
+    @playerInventory = game.plugins?.get('voxel-carry')?.inventory ? opts.playerInventory ? throw new Error('voxel-chest requires "voxel-carry" plugin or "playerInventory" set to inventory instance')
     @registry = game.plugins?.get('voxel-registry')
     @recipes = game.plugins?.get('voxel-recipes')
     @blockdata = game.plugins?.get('voxel-blockdata')
