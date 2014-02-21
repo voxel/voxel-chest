@@ -12,7 +12,7 @@
     "storage"
   ],
   "dependencies": {
-    "voxel-modal-dialog": "~0.1.0",
+    "voxel-inventory-dialog": "~0.4.0",
     "inventory": "~0.1.0",
     "itempile": "~0.1.1",
     "inventory-window": "~0.2.0",

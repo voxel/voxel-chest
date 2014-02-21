@@ -1,4 +1,4 @@
-ModalDialog = require 'voxel-modal-dialog'
+InventoryDialog = (require 'voxel-inventory-dialog').InventoryDialog
 Inventory = require 'inventory'
 InventoryWindow = require 'inventory-window'
 ItemPile = require 'itempile'
@@ -45,10 +45,8 @@ class Chest
     # TODO
 
 
-class ChestDialog extends ModalDialog
+class ChestDialog extends InventoryDialog
   constructor: (@game, @playerInventory, @registry, @blockdata) ->
-    # TODO: refactor with voxel-inventory-dialog
-    @playerIW = new InventoryWindow {width:10, registry:@registry, inventory: @playerInventory}
 
     @chestInventory = new Inventory(10, 3)
     @chestInventory.on 'changed', () => @updateBlockdata()
@@ -56,18 +54,13 @@ class ChestDialog extends ModalDialog
 
     # allow shift-click to transfer items between these two inventories
     @chestIW.linkedInventory = @playerInventory
-    @playerIW.linkedInventory = @chestInventory
+    #@playerIW.linkedInventory = @chestInventory # TODO: need to reach into voxel-inventory-dialog?
 
-    if document?
-      chestCont = @chestIW.createContainer()
+    chestCont = @chestIW.createContainer()
 
-      contents = []
-      contents.push chestCont
-      contents.push document.createElement('br') # TODO: better positioning
-      # player inventory at bottom
-      contents.push @playerIW.createContainer()
-
-    super game, {contents: contents}
+    super game,
+      playerLinkedInventory: @chestInventory
+      upper: [chestCont]
 
   loadBlockdata: (x, y, z) ->
     if not @blockdata?
