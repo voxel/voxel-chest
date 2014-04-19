@@ -15,7 +15,7 @@
     "voxel-inventory-dialog": "~0.4.0",
     "inventory": "~0.1.1",
     "itempile": "~0.2.1",
-    "inventory-window": "~0.2.0",
+    "inventory-window": "^0.3.0",
     "ever": "0.0.3"
   },
   "license": "MIT"
