@@ -12,7 +12,7 @@ The chest can be placed as a voxel in the world (temporary texture):
 
 And right-clicked to open an inventory, where you can transfer your items:
 
-![screenshit](http://i.imgur.com/wzFHzHy.png "Screenshot interface")
+![screenshit](http://i.imgur.com/g3CSxql.png "Screenshot interface")
 
 Each chest has its own independent inventory storage.
 Stores inventory data in the chunk with [voxel-blockdata](http://i.imgur.com/wzFHzHy.png).
