@@ -2,21 +2,26 @@
   "name": "voxel-chest",
   "description": "chests to store your items (voxel.js plugin)",
   "version": "0.2.0",
+  "main": "chest.coffee",
   "repository": {
     "type": "git",
     "url": "git@github.com:deathcap/voxel-chest.git"
   },
   "keywords": [
     "voxel",
+    "plugin",
     "block",
     "storage"
   ],
   "dependencies": {
     "voxel-inventory-dialog": "^0.4.1",
-    "inventory": "~0.1.1",
-    "itempile": "~0.2.1",
+    "inventory": "^0.1.2",
+    "itempile": "^0.2.1",
     "inventory-window": "^0.3.0",
     "ever": "0.0.3"
+  },
+  "browserify": {
+    "transform": [ "coffeeify" ]
   },
   "license": "MIT"
 }
