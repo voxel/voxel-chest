@@ -1,73 +1,86 @@
-InventoryDialog = (require 'voxel-inventory-dialog').InventoryDialog
-Inventory = require 'inventory'
-InventoryWindow = require 'inventory-window'
-ItemPile = require 'itempile'
+'use strict';
 
-module.exports = (game, opts) ->
-  return new Chest(game, opts)
+const InventoryDialog = require('voxel-inventory-dialog').InventoryDialog;
+const Inventory = require('inventory');
+const InventoryWindow = require('inventory-window');
+const ItemPile = require('itempile');
 
-module.exports.pluginInfo =
+module.exports = (game, opts) => return new Chest(game, opts);
+
+module.exports.pluginInfo = {
   loadAfter: ['voxel-blockdata', 'voxel-registry', 'voxel-recipes', 'voxel-carry']
+};
 
-class Chest
-  constructor: (@game, opts) ->
-    @playerInventory = game.plugins?.get('voxel-carry')?.inventory ? opts.playerInventory ? throw new Error('voxel-chest requires "voxel-carry" plugin or "playerInventory" set to inventory instance')
-    @registry = game.plugins?.get('voxel-registry')
-    @recipes = game.plugins?.get('voxel-recipes')
-    @blockdata = game.plugins?.get('voxel-blockdata')
+class Chest {
+  constructor(game, opts) {
+    this.game = game;
+    if (!game.plugins.get('voxel-carry')) throw new Error('voxel-chest requires "voxel-carry" plugin');
+    playerInventory = game.plugins.get('voxel-carry').inventory;
 
-    opts.registerBlock ?= @registry?
-    opts.registerRecipe ?= @recipes?
+    this.registry = game.plugins.get('voxel-registry') ? game.plugins.get('voxel-registry') : undefined;
+    this.recipes = game.plugins.get('voxel-recipes') ? game.plugins.get('voxel-recipes') : undefined;
+    this.blockdata = game.plugins.get('voxel-blockdata') ? game.plugins.get('voxel-blockdata') : undefined;
+
+    if (!('registerBlock' in opts)) opts.registerBlock = this.registry !== undefined;
+    if (!('registerRecipe' in opts)) opts.registerRecipe = this.recipes !== undefined;
    
-    if @game.isClient
-      @chestDialog = new ChestDialog(game, @playerInventory, @registry, @blockdata)
+    this.chestDialog = new ChestDialog(game, this.playerInventory, this.registry, this.blockdata);
 
-    @opts = opts
-    @enable()
+    this.opts = opts;
+    this.enable();
+  }
 
-  enable: () ->
-    if @opts.registerBlock
-      # TODO: chest textures? not in current tp..
-      @registry.registerBlock 'chest', {texture: ['door_wood_lower', 'piston_top_normal', 'bookshelf'], onInteract: (target) =>
-        # TODO: server-side?
-        @chestDialog.open(target)
-        true
-      }
+  enable() {
+    if (this.opts.registerBlock) {
+      // TODO: chest textures? not in current tp..
+      this.registry.registerBlock('chest', {texture: ['door_wood_lower', 'piston_top_normal', 'bookshelf'], onInteract: (target) => {
+        // TODO: server-side?
+        this.chestDialog.open(target);
+        return true;
+      }});
+    }
 
-    if @opts.registerRecipe
-      @recipes.registerPositional([
+    if (this.opts.registerRecipe) {
+      this.recipes.registerPositional([
         ['wood.plank', 'wood.plank', 'wood.plank'],
         ['wood.plank', undefined, 'wood.plank'],
         ['wood.plank', 'wood.plank', 'wood.plank']],
-        new ItemPile('chest', 1))
+        new ItemPile('chest', 1));
+    }
+  }
 
-  disable: () ->
-    # TODO
+  disable() {
+  }
+}
 
-
-class ChestDialog extends InventoryDialog
-  constructor: (@game, @playerInventory, @registry, @blockdata) ->
-
-    @chestInventory = new Inventory(10, 3)
-    @chestInventory.on 'changed', () => @updateBlockdata()
-    @chestIW = new InventoryWindow {inventory:@chestInventory, registry:@registry}
-
-    # allow shift-click to transfer items between these two inventories
-    @chestIW.linkedInventory = @playerInventory
-    #@playerIW.linkedInventory = @chestInventory # TODO: need to reach into voxel-inventory-dialog?
-
-    chestCont = @chestIW.createContainer()
+// TODO: port the rest
+class ChestDialog extends InventoryDialog {
+  constructor(this.game, this.playerInventory, this.registry, this.blockdata) {
 
     super game,
-      playerLinkedInventory: @chestInventory
+      playerLinkedInventory: this.chestInventory
       upper: [chestCont]
 
-  loadBlockdata: (x, y, z) ->
-    if not @blockdata?
+  static setup(opts) {
+    this.chestInventory = new Inventory(10, 3)
+    this.chestInventory.on 'changed', () => this.updateBlockdata()
+    this.chestIW = new InventoryWindow {inventory:this.chestInventory, registry:this.registry}
+
+    # allow shift-click to transfer items between these two inventories
+    this.chestIW.linkedInventory = this.playerInventory
+    #this.playerIW.linkedInventory = this.chestInventory # TODO: need to reach into voxel-inventory-dialog?
+
+    chestCont = this.chestIW.createContainer()
+
+
+  }
+
+  loadBlockdata: (x, y, z) -> {
+    if not this.blockdata?
       console.log 'voxel-blockdata not loaded, voxel-chest persistence disabled'
       return
 
-    bd = @blockdata.get x, y, z
+    bd = this.blockdata.get x, y, z
     console.log 'activeBlockdata=',JSON.stringify(bd)
     if bd?
       console.log 'load existing at ',x,y,z
@@ -76,30 +89,30 @@ class ChestDialog extends InventoryDialog
       console.log 'newInventory='+JSON.stringify(newInventory)
       for itemPile, i in newInventory.array  # TODO: if smaller than current?
         console.log 'load chest',i,itemPile
-        @chestInventory.set i, itemPile
+        this.chestInventory.set i, itemPile
     else
       console.log 'new empty inventory at ',x,y,z
-      bd = {inventory: @chestInventory.toString()}
-      @blockdata.set x, y, z, bd
+      bd = {inventory: this.chestInventory.toString()}
+      this.blockdata.set x, y, z, bd
 
-    @activeBlockdata = bd
-    console.log 'activeBlockdata 2=',JSON.stringify(@activeBlockdata)
+    this.activeBlockdata = bd
+    console.log 'activeBlockdata 2=',JSON.stringify(this.activeBlockdata)
 
-  open: (target) ->
-    @chestInventory.clear()
+  open: (target) -> {
+    this.chestInventory.clear()
 
     [x, y, z] = target.voxel
-    @loadBlockdata(x, y, z)
+    this.loadBlockdata(x, y, z)
 
     super()
 
-  updateBlockdata: () ->
-    console.log 'update with activeBlockdata=',JSON.stringify(@activeBlockdata)
-    return if not @activeBlockdata?
+  updateBlockdata: () -> {
+    console.log 'update with activeBlockdata=',JSON.stringify(this.activeBlockdata)
+    return if not this.activeBlockdata?
 
-    console.log 'chestInventory=',@chestInventory.toString()
-    @activeBlockdata.inventory = @chestInventory.toString()
+    console.log 'chestInventory=',this.chestInventory.toString()
+    this.activeBlockdata.inventory = this.chestInventory.toString()
 
-  close: () ->
-    delete @activeBlockdata
+  close: () -> {
+    delete this.activeBlockdata
     super()
