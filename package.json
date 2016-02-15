@@ -2,7 +2,7 @@
   "name": "voxel-chest",
   "description": "chests to store your items (voxel.js plugin)",
   "version": "0.2.2",
-  "main": "chest.coffee",
+  "main": "chest.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:deathcap/voxel-chest.git"
