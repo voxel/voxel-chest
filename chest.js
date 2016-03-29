@@ -55,27 +55,25 @@ class Chest {
 
 class ChestDialog extends InventoryDialog {
   constructor(game, playerInventory, registry, blockdata) {
+    const chestInventory = new Inventory(10, 3)
+    chestInventory.on('changed', () => this.updateBlockdata());
+    const chestIW = new InventoryWindow({inventory:chestInventory, registry:registry});
+
+    // allow shift-click to transfer items between these two inventories
+    chestIW.linkedInventory = playerInventory;
+    //this.playerIW.linkedInventory = this.chestInventory # TODO: need to reach into voxel-inventory-dialog?
+
+    const chestCont = chestIW.createContainer();
+
     super(game,
       {
-        playerLinkedInventory: ChestDialog.chestInventory,
-        upper: [ChestDialog.chestCont]
+        playerLinkedInventory: chestInventory,
+        upper: [chestCont]
       });
     this.game = game;
     this.playerInventory = playerInventory;
     this.registry = registry;
     this.blockdata = blockdata;
-  }
-
-  static setup(opts) {
-    ChestDialog.chestInventory = new Inventory(10, 3)
-    ChestDialog.chestInventory.on('changed', () => this.updateBlockdata());
-    ChestDialog.chestIW = new InventoryWindow({inventory:this.chestInventory, registry:this.registry});
-
-    // allow shift-click to transfer items between these two inventories
-    ChestDialog.chestIW.linkedInventory = this.playerInventory;
-    //this.playerIW.linkedInventory = this.chestInventory # TODO: need to reach into voxel-inventory-dialog?
-
-    ChestDialog.chestCont = ChestDialog.chestIW.createContainer();
   }
 
   loadBlockdata(x, y, z) {
