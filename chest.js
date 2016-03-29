@@ -74,6 +74,7 @@ class ChestDialog extends InventoryDialog {
     this.playerInventory = playerInventory;
     this.registry = registry;
     this.blockdata = blockdata;
+    this.chestInventory = chestInventory;
   }
 
   loadBlockdata(x, y, z) {
@@ -89,7 +90,8 @@ class ChestDialog extends InventoryDialog {
       // TODO: better way to 'load' into an inventory than setting all slots?
       const newInventory = Inventory.fromString(bd.inventory)
       console.log('newInventory='+JSON.stringify(newInventory));
-      for (let itemPile of newInventory.array) { // TODO: if smaller than current?
+      for (let i = 0; i < newInventory.array.length; ++i) { // TODO: if smaller than current?
+        let itemPile = newInventory.array[i];
         console.log('load chest',i,itemPile);
         this.chestInventory.set(i, itemPile);
       }
@@ -105,9 +107,12 @@ class ChestDialog extends InventoryDialog {
 
   open(target) {
     this.chestInventory.clear();
-    this.loadBlockdata(target.voxel.x, target.voxel.y, target.voxel.z);
+    const x = target.voxel[0];
+    const y = target.voxel[1];
+    const z = target.voxel[2];
+    this.loadBlockdata(x, y, z);
 
-    InventoryDialog.open(target);
+    super.open(target);
   }
 
   updateBlockdata() {
@@ -120,6 +125,6 @@ class ChestDialog extends InventoryDialog {
 
   close() {
     delete this.activeBlockdata;
-    InventoryDialog.close();
+    super.close();
   }
 }
