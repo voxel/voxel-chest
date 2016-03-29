@@ -1,7 +1,7 @@
 {
   "name": "voxel-chest",
   "description": "chests to store your items (voxel.js plugin)",
-  "version": "0.2.2",
+  "version": "1.0.0",
   "main": "chest.js",
   "repository": {
     "type": "git",
