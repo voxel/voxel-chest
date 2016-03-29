@@ -58,7 +58,7 @@ class ChestDialog extends InventoryDialog {
     super(game,
       {
         playerLinkedInventory: ChestDialog.chestInventory,
-        upper: [chestCont]
+        upper: [ChestDialog.chestCont]
       });
     this.game = game;
     this.playerInventory = playerInventory;
@@ -75,7 +75,7 @@ class ChestDialog extends InventoryDialog {
     ChestDialog.chestIW.linkedInventory = this.playerInventory;
     //this.playerIW.linkedInventory = this.chestInventory # TODO: need to reach into voxel-inventory-dialog?
 
-    chestCont = ChestDialog.chestIW.createContainer();
+    ChestDialog.chestCont = ChestDialog.chestIW.createContainer();
   }
 
   loadBlockdata(x, y, z) {
